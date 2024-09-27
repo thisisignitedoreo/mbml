@@ -24,6 +24,6 @@ issue about adding your mod, and it will be checked and added to repo asap!
 ## Thanks!
 
 - neoclar for inventing method of running multiple mods at the same time and explaining a whole bunch of stuff to me
-- Everyone else in the mewnbase discord server for the support
+- Everyone else in the [MewnBase discord server](https://discord.gg/mewnbase) for the support
 - Steve @Cairn4 for making such a cool game!
 
