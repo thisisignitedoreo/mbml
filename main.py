@@ -150,7 +150,7 @@ class MewnModLoader(QtWidgets.QMainWindow):
             # TODO: remove this debug security-nightmare feature
             shutil.copy(link[6:], path)
         else:
-            file = self.download_file(link, lambda x, y: (self.ui.main_pbar.setMaximum(y) or self.ui.main_pbar.setValue(x)))
+            file = self.download_file(link, lambda x, y: (self.ui.main_pbar.setMaximum(y) or self.ui.main_pbar.setValue(x) or app.processEvents()))
             open(path, "wb").write(file)
 
     def download_file(self, url, callback=None):
