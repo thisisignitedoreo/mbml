@@ -2,3 +2,6 @@ __pycache__/
 *.pyc
 main_rc.py
 ui.py
+main.bin
+main.exe
+main.*/
