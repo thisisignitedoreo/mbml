@@ -18,5 +18,12 @@ Mod file is a tar archive, that contains two files:
 
 To add your own mod to the game, press such button in the loader.
 
-To add it to the [repo](https://github.com/thisisignitedoreo/mbml-repo), send a
+To add it to the [repo](https://github.com/thisisignitedoreo/mbml-repo), send an
 issue about adding your mod, and it will be checked and added to repo asap!
+
+## Thanks!
+
+- neoclar for inventing method of running multiple mods at the same time and explaining a whole bunch of stuff to me
+- Everyone else in the mewnbase discord server for the support
+- Steve @Cairn4 for making such a cool game!
+
