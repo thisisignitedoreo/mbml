@@ -1,6 +1,6 @@
 # MewnBase Mod-Loader
 MewnBase Mod-Loader, that can install mods from shared repository, local mods,
-and load may mods at a time.
+and load many mods at a time.
 
 ## Quickstart
 Download a nuitka build from the [latest release](https://github.com/thisisignitedoreo/mbml/releases/latest)
