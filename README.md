@@ -10,11 +10,11 @@ and run it, it is straightforward then.
 Mod file is a tar archive, that contains two files:
 - `manifest.json`<br/>
   A manifest file that contains meta information about the mod, like name, authors,<br/>
-  description and manifest version, that should be equal to zero.
+  description and manifest version, that should be equal to zero.<br/>
   `{"name": "Mod name", "authors": ["author 1", "author 2"], "description": "A cool mod.\nDoes things like this.", "version": 0}`
 - `mod.jar`<br/>
   A mod itself, packs only classes that should be replaced.<br/>
-  e.g. a archive with one file: `com/cairn4/moonbase/desktop/DesktopLauncher.class`
+  e.g. An archive with one file: e.g. `com/cairn4/moonbase/desktop/DesktopLauncher.class`
 
 To add your own mod to the game, press such button in the loader.
 
