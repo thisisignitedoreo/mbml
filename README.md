@@ -19,4 +19,5 @@ Mod file is a tar archive, that contains two files:
 To add your own mod to the game, press such button in the loader.
 
 To add it to the [repo](https://github.com/thisisignitedoreo/mbml-repo), send a
-pull request adding your mod to the index.json and adding mod file itself.
+pull request adding your mod to the index.json according to the previously
+added mods and adding mod file itself.
