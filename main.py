@@ -33,6 +33,7 @@ class MewnModLoader(QtWidgets.QMainWindow):
         palette.setColor(QtGui.QPalette.Link, QtGui.QColor(42, 130, 218))
         palette.setColor(QtGui.QPalette.Highlight, QtGui.QColor(42, 130, 218))
         palette.setColor(QtGui.QPalette.HighlightedText, QtGui.Qt.black)
+        palette.setColor(QtGui.QPalette.PlaceholderText, QtGui.QColor(120, 120, 120))
 
         app.setPalette(palette)
         app.setStyleSheet("QToolTip { color: #ffffff; background-color: #2a82da; border: 1px solid white; }")
@@ -54,6 +55,8 @@ class MewnModLoader(QtWidgets.QMainWindow):
 
         self.connect()
 
+        if self.config["debug"]: self.ui.debug_checkbox.setCheckState(QtCore.Qt.CheckState.Checked)
+
     def connect(self):
         self.ui.browse_path_button.clicked.connect(self.browse_path)
         self.ui.online_mods.itemClicked.connect(self.online_mod_selected)
@@ -65,10 +68,23 @@ class MewnModLoader(QtWidgets.QMainWindow):
         self.ui.l_moveup.clicked.connect(lambda: self.swap_queue(True))
         self.ui.l_movedown.clicked.connect(lambda: self.swap_queue(False))
         self.ui.l_modinstall.clicked.connect(self.install_mod_local)
+        self.ui.debug_checkbox.checkStateChanged.connect(self.set_debug_mods)
+        self.ui.repo_lineedit.textEdited.connect(self.set_custom_repo)
+
+    def set_debug_mods(self, x):
+        self.ui.debug_checkbox.setText("Shown" if x == QtCore.Qt.CheckState.Checked else "Hidden")
+        self.config["debug"] = x == QtCore.Qt.CheckState.Checked
+        self.load_online_mods()
+        self.write_config()
+    
+    def set_custom_repo(self, x):
+        self.repo = self.fetch_online_repository()
+        self.config["repo"] = x
+        self.write_config()
 
     def read_config(self):
         config_path = os.path.join(config_folder, "mbml", "config.json")
-        default_config = {"game_path": None, "mods": {}, "mod_queue": []}
+        default_config = {"game_path": None, "mods": {}, "mod_queue": [], "repo": "https://thisisignitedoreo.github.io/mbml-repo/", "debug": False}
         
         if not os.path.isdir(os.path.dirname(config_path)):
             os.mkdir(os.path.dirname(config_path))
@@ -98,12 +114,21 @@ class MewnModLoader(QtWidgets.QMainWindow):
         self.write_config()
     
     def fetch_online_repository(self):
-        index_url = "https://thisisignitedoreo.github.io/mbml-repo/"
-        request = requests.get(index_url)
+        index_url = self.config["repo"]
+        try: request = requests.get(index_url)
+        except requests.exceptions.ConnectionError: return {}
         if not request.ok:
             return {}
-        return request.json()
-        # return {"testing": {"name": "testing mod", "authors": ["eeh idk"], "description": "testing mod\nfor testing purposes", "link": "local:mod.mbm"}, "invalid": {"name": "invalid mod", "authors": ["eeh idk"], "description": "testing mod\nshould not work", "link": "local:invalidmod.mbm"}}
+        data = request.json()
+        retval = {}
+        for k, i in data.items():
+            if "debug" not in i.keys(): continue
+            if "name" not in i.keys(): continue
+            if "authors" not in i.keys(): continue
+            if "description" not in i.keys(): continue
+            if "link" not in i.keys(): continue
+            retval[k] = i
+        return retval
 
     def load_mod_online(self, slug, mod):
         if not mod:
@@ -136,6 +161,7 @@ class MewnModLoader(QtWidgets.QMainWindow):
     def load_online_mods(self):
         self.ui.online_mods.clear()
         for k, i in self.repo.items():
+            if i["debug"] and not self.config["debug"]: continue
             item = QtWidgets.QListWidgetItem(i["name"])
             item.setData(QtCore.Qt.ItemDataRole.UserRole, k)
             self.ui.online_mods.addItem(item)
@@ -263,9 +289,9 @@ class MewnModLoader(QtWidgets.QMainWindow):
                 return
 
             self.config["mods"][mod] = {
-                "name": self.repo[mod]["name"],
-                "authors": self.repo[mod]["authors"],
-                "description": self.repo[mod]["description"],
+                "name": manifest["name"],
+                "authors": manifest["authors"],
+                "description": manifest["description"],
                 "enabled": True,
             }
             self.config["mod_queue"].append(mod)
