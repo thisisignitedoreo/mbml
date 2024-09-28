@@ -53,6 +53,8 @@ class MewnModLoader(QtWidgets.QMainWindow):
 
         self.selected_mod = None
 
+        self.ui.repo_lineedit.setText(self.config["repo"])
+
         self.connect()
 
         if self.config["debug"]: self.ui.debug_checkbox.setCheckState(QtCore.Qt.CheckState.Checked)
@@ -116,7 +118,7 @@ class MewnModLoader(QtWidgets.QMainWindow):
     def fetch_online_repository(self):
         index_url = self.config["repo"]
         try: request = requests.get(index_url)
-        except requests.exceptions.ConnectionError: return {}
+        except: return {}
         if not request.ok:
             return {}
         data = request.json()
