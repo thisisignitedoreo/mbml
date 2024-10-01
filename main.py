@@ -9,7 +9,7 @@ import sys, os, json, shutil
 import tarfile, subprocess, requests
 
 class MewnModLoader(QtWidgets.QMainWindow):
-    manifest_version = 0
+    manifest_version = 1
 
     def __init__(self):
         super(MewnModLoader, self).__init__()
@@ -246,6 +246,7 @@ class MewnModLoader(QtWidgets.QMainWindow):
         self.install_mod_custom(mod)
 
     def install_mod_local(self):
+        config_path = os.path.join(config_folder, "mbml")
         path, _ = QtWidgets.QFileDialog.getOpenFileName(None, "Select an .mbm file", "", "MewnBase Mod (*.mbm)")
         if not path: return
         if not tarfile.is_tarfile(path):
@@ -255,7 +256,8 @@ class MewnModLoader(QtWidgets.QMainWindow):
         if not os.path.isdir(os.path.join(config_folder, "mbml", "temp")):
             os.mkdir(os.path.join(config_folder, "mbml", "temp"))
         
-        mod_slug = os.path.basename(path).rsplit(".", 1)[0]
+        tarfile.TarFile(path, "r").extract("manifest.json", os.path.join(config_path, "temp"))
+        mod_slug = json.load(open(os.path.join(config_path, "temp", "manifest.json")))["slug"]
         shutil.copy(path, os.path.join(config_folder, "mbml", "temp", mod_slug + ".mbm"))
         self.install_mod_custom(mod_slug)
     

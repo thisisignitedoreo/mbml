@@ -10,8 +10,8 @@ and run it, it is straightforward then.
 Mod file is a tar archive, that contains two files:
 - `manifest.json`<br/>
   A manifest file that contains meta information about the mod, like name, authors,<br/>
-  description and manifest version, that should be equal to zero.<br/>
-  e.g. `{"name": "Mod name", "authors": ["author 1", "author 2"], "description": "A cool mod.\nDoes things like this.", "version": 0}`
+  description and manifest version, that should be equal to one.<br/>
+  e.g. `{"name": "Mod name", "authors": ["author 1", "author 2"], "description": "A cool mod.\nDoes things like this.", "slug": "some-mod", "version": 1}`
 - `mod.jar`<br/>
   A mod itself, packs only classes that should be replaced.<br/>
   e.g. An archive with one file: e.g. `com/cairn4/moonbase/desktop/DesktopLauncher.class`
