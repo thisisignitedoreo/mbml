@@ -324,13 +324,37 @@ class MewnModLoader(QtWidgets.QMainWindow):
 
         mods = []
         for i in self.config["mod_queue"]:
-            if self.config["mods"][i]["enabled"]:
+            if self.config["mods"][i]["enabled"] and os.path.isfile(os.path.join(config_path, "mods", i, "mod.jar")):
                 mods.append(os.path.join(config_path, "mods", i, "mod.jar"))
 
         mods = mods[::-1]
         mods.append(os.path.join(self.config["game_path"], "game", "desktop-1.0.jar"))
 
-        subprocess.run(["java", "-cp", (";" if os.name == "nt" else ":").join(mods), "com.cairn4.moonbase.desktop.DesktopLauncher"], cwd=self.config["game_path"])
+        temp_game_path = os.path.join(config_path, "game")
+        if os.path.isdir(temp_game_path): shutil.rmtree(temp_game_path)
+        os.mkdir(temp_game_path)
+
+        copy_folder_to_temp = lambda x: shutil.copytree(os.path.join(self.config["game_path"], x), os.path.join(temp_game_path, x))
+        copy_file_to_temp = lambda x: shutil.copy(os.path.join(self.config["game_path"], x), os.path.join(temp_game_path, x))
+        copy_folder_to_temp("data")
+        copy_folder_to_temp("saves")
+        copy_file_to_temp("settings.json")
+
+        for i in self.config["mod_queue"]:
+            if self.config["mods"][i]["enabled"] and os.path.isdir(os.path.join(config_path, "mods", i, "data")):
+                for f in os.listdir(os.path.join(config_path, "mods", i, "data")):
+                    if os.path.isdir(os.path.join(config_path, "mods", i, "data", f)):
+                        print(f"copying {f}")
+                        shutil.copytree(os.path.join(config_path, "mods", i, "data", f), os.path.join(temp_game_path, "data", f), dirs_exist_ok=True)
+                    else:
+                        shutil.copy2(os.path.join(config_path, "mods", i, "data", f), os.path.join(temp_game_path, "data"))
+
+        subprocess.run(["java", "-cp", (";" if os.name == "nt" else ":").join(mods), "com.cairn4.moonbase.desktop.DesktopLauncher"], cwd=temp_game_path)
+
+        if os.path.isdir(os.path.join(self.config["game_path"], "saves_bak")): shutil.rmtree(os.path.join(self.config["game_path"], "saves_bak"))
+        shutil.move(os.path.join(self.config["game_path"], "saves"), os.path.join(self.config["game_path"], "saves_bak"))
+        shutil.copytree(os.path.join(temp_game_path, "saves"), os.path.join(self.config["game_path"], "saves"))
+        shutil.copy2(os.path.join(temp_game_path, "settings.json"), os.path.join(self.config["game_path"], "settings.json"))
 
 
 if __name__ == "__main__":
